@@ -27,11 +27,10 @@ func (p *Provider) GetRecords(ctx context.Context, zone string) ([]libdns.Record
 
 	records := []libdns.Record{}
 	for _, domain := range domains {
-		records = append(records, libdns.Record{
-			ID:    domain,
-			Name:  domain,
-			Type:  domain,
-			Value: domain,
+		records = append(records, libdns.TXT{
+			Name: domain,
+			Text: "",
+			TTL:  0,
 		})
 	}
 

@@ -21,21 +21,24 @@ func (p *Provider) setRecord(ctx context.Context, zone string, record libdns.Rec
 	p.mutex.Lock()
 	defer p.mutex.Unlock()
 
+	// Get the underlying RR from the Record interface
+	rr := record.RR()
+
 	// sanitize the domain, combines the zone and record names
 	// the record name should typically be relative to the zone
-	domain := libdns.AbsoluteName(record.Name, zone)
+	domain := libdns.AbsoluteName(rr.Name, zone)
 
 	params := map[string]string{"verbose": "true"}
 
-	switch record.Type {
+	switch rr.Type {
 	case "TXT":
-		params["txt"] = record.Value
+		params["txt"] = rr.Data
 	case "A":
-		params["ip"] = record.Value
+		params["ip"] = rr.Data
 	case "AAAA":
-		params["ipv6"] = record.Value
+		params["ipv6"] = rr.Data
 	default:
-		return fmt.Errorf("unsupported record type: %s", record.Type)
+		return fmt.Errorf("unsupported record type: %s", rr.Type)
 	}
 
 	// api infos:
